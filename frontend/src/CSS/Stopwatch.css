@@ -1,0 +1,80 @@
+.stopwatch-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+  }
+  
+  .stopwatch-card {
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent; /* Blends with background */
+    box-shadow: none; /* Removes white box effect */
+  }
+  
+  .progress-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .progress-ring {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    transform: rotate(-90deg);
+  }
+  
+  .progress-background {
+    fill: none;
+    stroke: #ddd;
+    stroke-width: 12;
+  }
+  
+  .progress {
+    fill: none;
+    stroke: #6c5ce7;
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s linear;
+  }
+  
+  .time-display {
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  button {
+    background: #6c5ce7;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.3s;
+  }
+  
+  button:hover {
+    background: #4834d4;
+  }
+  
