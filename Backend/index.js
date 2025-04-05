@@ -2,24 +2,21 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import pg from "pg";
-//import dotenv from "dotenv";  // Load environment variables
+import axios from "axios";
 
 const app = express();
-const PORT = 5000;
-
-let loggedInUserId = null; // Global variable to store logged-in user ID
-
+const PORT = 3000;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
+// Database Configuration
 const db = new pg.Client({
-  user: "postgres",
-  host:  "localhost",
-  database: "Miniproject",
-  password:  "7323001107",
-  port:  5432,
+  connectionString: 'postgresql://neondb_owner:npg_n5qkVy6fuMdr@ep-curly-river-a5btldv9-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 // Connect to PostgreSQL
@@ -30,141 +27,126 @@ db.connect()
     process.exit(1);
   });
 
-  app.post("/login", async (req, res) => {
-    const { name, password } = req.body;
-  
-    if (!name || !password) {
-      return res.status(400).json({ message: "Name and password are required" });
-    }
-  
-    try {
-      const result = await db.query(
-        "SELECT * FROM users WHERE name = $1 AND password_hash = $2",
-        [name, password]
-      );
-  
-      if (result.rows.length === 0) {
-        return res.status(401).json({ message: "Invalid name or password" });
-      }
-  
-      loggedInUserId = result.rows[0].id; // Store user ID globally
-      console.log(`✅ User logged in: ${loggedInUserId}`);
-  
-      // Ensure a row exists in the stopwatch table for the user
-      await db.query(
-        `INSERT INTO stopwatch (id, start_time, elapsed_time, is_running) 
-         VALUES ($1, NOW(), 0, FALSE) 
-         ON CONFLICT (user_id) DO NOTHING;`,
-        [loggedInUserId]
-      );
-  
-      res.status(200).json({ message: "Login successful", user: result.rows[0] });
-    } catch (error) {
-      console.error("❌ Error during login:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-  
-  
-  
+// Store logged-in user ID globally
+let loggedInUserId = null;
 
-// Register route
-app.post("/register", async (req, res) => {
-  const { name, password } = req.body;
+/**
+ * 📌 User Login (Plain-text comparison)
+ */
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
 
-  if (!name || !password) {
-    return res.status(400).json({ message: "Name and password are required" });
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required" });
   }
 
   try {
-    const userExists = await db.query("SELECT * FROM users WHERE name = $1", [name]);
+    const result = await db.query("SELECT * FROM users WHERE username = $1", [username]);
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    const user = result.rows[0];
+    
+    // Skipping password hash check since bcrypt is removed
+    if (user.password_hash !== password) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
+
+    loggedInUserId = user.id;
+    console.log(`✅ User logged in: ${loggedInUserId}`);
+
+    res.status(200).json({
+      message: "Login successful",
+      user,
+      loggedInUserId,
+    });
+  } catch (error) {
+    console.error("❌ Error during login:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+/**
+ * 📌 User Registration (Plain-text password)
+ */
+app.post("/register", async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required" });
+  }
+
+  try {
+    const userExists = await db.query("SELECT * FROM users WHERE username = $1", [username]);
 
     if (userExists.rows.length > 0) {
-      return res.status(409).json({ message: "Name already exists" });
+      return res.status(409).json({ message: "Username already exists" });
     }
 
     const newUser = await db.query(
-      "INSERT INTO users (name, password_hash) VALUES ($1, $2) RETURNING *",
-      [name, password]
+      "INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING *",
+      [username, password]
     );
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Registration successful",
       user: newUser.rows[0],
     });
   } catch (error) {
     console.error("❌ Error during registration:", error.message);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// Start Stopwatch
-app.post("/start", async (req, res) => {
-  if (!loggedInUserId) return res.status(401).send("User not logged in");
+/**
+ * 📌 Get Current User ID
+ */
+app.get("/current-user", (req, res) => {
+  if (loggedInUserId) {
+    res.json({ loggedInUserId });
+  } else {
+    res.status(404).json({ message: "No user logged in" });
+  }
+});
+
+/**
+ * 📜 Get Chapter Summary by Number
+ */
+const API_HOST = "bhagavad-gita3.p.rapidapi.com";
+const API_KEY = "9f6532efefmsh44df7a033084be9p187582jsnc4279017d598";
+
+app.get("/chapter/:chapterNumber", async (req, res) => {
+  const { chapterNumber } = req.params;
 
   try {
-    const result = await db.query(
-      `INSERT INTO stopwatch (user_id, start_time, is_running) 
-       VALUES ($1, NOW(), TRUE) 
-       ON CONFLICT (user_id) 
-       DO UPDATE SET start_time = NOW(), is_running = TRUE 
-       RETURNING *;`,
-      [loggedInUserId]
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error starting stopwatch");
+    const response = await axios.get(`https://${API_HOST}/v2/chapters/${chapterNumber}/`, {
+      headers: {
+        "x-rapidapi-host": API_HOST,
+        "x-rapidapi-key": API_KEY,
+      },
+    });
+
+    const data = response.data;
+
+    if (!data || !data.chapter_summary) {
+      return res.status(404).json({ error: "❌ Summary not available for this chapter." });
+    }
+
+    res.json({
+      chapter_number: data.chapter_number,
+      name: data.name_translated,
+      meaning: data.name_meaning || "Meaning not available",
+      summary: data.chapter_summary,
+    });
+  } catch (error) {
+    console.error("❌ Error fetching chapter:", error.message);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
-// Stop Stopwatch
-app.post("/stop", async (req, res) => {
-  if (!loggedInUserId) return res.status(401).send("User not logged in");
-
-  try {
-    const result = await db.query(
-      `UPDATE stopwatch 
-       SET elapsed_time = elapsed_time + EXTRACT(EPOCH FROM (NOW() - start_time)), 
-           is_running = FALSE 
-       WHERE user_id = $1 
-       RETURNING *;`,
-      [loggedInUserId]
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error stopping stopwatch");
-  }
-});
-
-// Reset Stopwatch
-app.post("/reset", async (req, res) => {
-  if (!loggedInUserId) return res.status(401).send("User not logged in");
-
-  try {
-    await db.query(`UPDATE stopwatch SET elapsed_time = 0, is_running = FALSE WHERE user_id = $1;`, [loggedInUserId]);
-    res.send("Stopwatch reset");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error resetting stopwatch");
-  }
-});
-
-// Get Stopwatch Data
-app.get("/status", async (req, res) => {
-  if (!loggedInUserId) return res.status(401).send("User not logged in");
-
-  try {
-    const result = await db.query(`SELECT * FROM stopwatch WHERE user_id = $1;`, [loggedInUserId]);
-    res.json(result.rows[0] || {});
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error fetching stopwatch data");
-  }
-});
-
-
+// Start the Express server
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

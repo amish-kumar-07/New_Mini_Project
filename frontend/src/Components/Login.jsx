@@ -4,22 +4,22 @@ import axios from "axios";
 import '../CSS/Login.css';
 
 export default function Login({ onAuth }) {  
-    const [name, setName] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate();
 
-    // **Handle Login**
+    // Handle Login
     const handleLogin = async (e) => {
         e.preventDefault();
         setErrorMessage('');
         setSuccessMessage('');
 
         try {
-            const response = await axios.post('http://localhost:5000/login', { name, password });
+            const response = await axios.post('http://localhost:3000/login', { username, password });
             setSuccessMessage('Login successful!');
-            onAuth(); // Call authentication function
+            onAuth();
             navigate("/dashboard");
         } catch (error) {
             if (error.response) {
@@ -30,14 +30,14 @@ export default function Login({ onAuth }) {
         }
     };
 
-    // **Handle Register**
+    // Handle Register
     const handleRegister = async (e) => {
         e.preventDefault();
         setErrorMessage('');
         setSuccessMessage('');
 
         try {
-            const response = await axios.post('http://localhost:3000/register', { name, password });
+            const response = await axios.post('http://localhost:3000/register', { username, password });
             setSuccessMessage('Registration successful! You can now log in.');
         } catch (error) {
             if (error.response) {
@@ -58,13 +58,13 @@ export default function Login({ onAuth }) {
           {/* Login Form */}
           <form onSubmit={handleLogin}>
             <div className="input-group">
-              <label htmlFor="name">Name</label>
+              <label htmlFor="username">Username</label>
               <input
-                id="name"
+                id="username"
                 type="text"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
@@ -84,13 +84,12 @@ export default function Login({ onAuth }) {
             </button>
           </form>
 
-          {/* Register Form */}
+          {/* Register Button */}
           <form onSubmit={handleRegister}>
             <button type="submit" className="button register-button">
               Register
             </button>
           </form>
-
         </div>
       </div>
     );
