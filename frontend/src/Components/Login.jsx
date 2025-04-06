@@ -17,7 +17,7 @@ export default function Login({ onAuth }) {
         setSuccessMessage('');
 
         try {
-            const response = await axios.post('http://localhost:3000/login', { username, password });
+            const response = await axios.post('https://new-mini-project.onrender.com/login', { username, password });
             setSuccessMessage('Login successful!');
             onAuth();
             navigate("/dashboard");
@@ -37,7 +37,7 @@ export default function Login({ onAuth }) {
         setSuccessMessage('');
 
         try {
-            const response = await axios.post('http://localhost:3000/register', { username, password });
+            const response = await axios.post('https://new-mini-project.onrender.com/register', { username, password });
             setSuccessMessage('Registration successful! You can now log in.');
         } catch (error) {
             if (error.response) {
