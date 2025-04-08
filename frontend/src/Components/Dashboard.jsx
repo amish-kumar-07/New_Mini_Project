@@ -11,13 +11,13 @@ export default function Dashboard() {
     <>
       <Navbar />
       <div className="min-h-screen bg-gray-100 relative">
-        <section className="relative flex items-center justify-center text-center bg-gradient-to-r from-blue-500 to-purple-600 h-[80vh] text-white px-6">
-          <div className="max-w-3xl">
+        <section className="relative flex items-center justify-center text-center bg-gradient-to-r from-blue-500 to-purple-600 h-[80vh] px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl text-white">
             <motion.h1 
               initial={{ opacity: 0, y: -50 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 0.8 }}
-              className="text-5xl font-bold"
+              className="text-3xl sm:text-4xl md:text-5xl font-extrabold"
             >
               Explore Spiritual Teachings
             </motion.h1>
@@ -25,7 +25,7 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 50 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="mt-4 text-lg"
+              className="mt-4 text-base sm:text-lg md:text-xl"
             >
               Discover mindfulness, meditation, and spiritual growth through curated teachings.
             </motion.p>
@@ -34,7 +34,7 @@ export default function Dashboard() {
               animate={{ opacity: 1, scale: 1 }} 
               transition={{ duration: 0.5, delay: 0.6 }}
               onClick={() => navigate("/teachings")}
-              className="mt-6 px-6 py-3 bg-white text-indigo-600 font-semibold text-lg rounded-lg shadow-lg hover:bg-indigo-100 transition"
+              className="mt-6 px-6 py-3 bg-white text-indigo-600 font-semibold text-base md:text-lg rounded-lg shadow-lg hover:bg-indigo-100 transition"
             >
               Start Learning
             </motion.button>
@@ -47,7 +47,7 @@ export default function Dashboard() {
         {/* Button to open Bhagavad Gita Bot */}
         <button 
           onClick={() => navigate("/gita-bot")} 
-          className="fixed bottom-6 right-6 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-700 transition"
+          className="fixed bottom-6 right-6 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-blue-700 transition text-sm sm:text-base"
         >
           Open Bhagavad Gita Bot
         </button>

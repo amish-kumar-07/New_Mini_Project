@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { IoClose, IoSend } from "react-icons/io5";
+import ReactMarkdown from "react-markdown";
 
 export default function GitaBotPage() {
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function GitaBotPage() {
     if (!chapterNumber) {
       setMessages((prev) => [
         ...prev,
-        { text: "Please specify a chapter number (e.g., 'Tell me about Chapter 2').", type: "bot" },
+        { text: "🙏 Please specify a chapter number (e.g., 'Tell me about Chapter 2').", type: "bot" },
       ]);
       return;
     }
@@ -39,10 +41,12 @@ export default function GitaBotPage() {
       ...prev,
       { text: `📖 Fetching summary for Chapter ${chapterNumber}...`, type: "bot" },
     ]);
+    setIsTyping(true);
 
     try {
       const response = await fetch(`http://localhost:3000/chapter/${chapterNumber}`);
       const data = await response.json();
+      setIsTyping(false);
 
       if (!data || data.error) {
         setMessages((prev) => [
@@ -54,10 +58,14 @@ export default function GitaBotPage() {
 
       setMessages((prev) => [
         ...prev,
-        { text: `📖 **${data.name} (${data.meaning})**\n\n${data.summary}`, type: "bot" },
+        {
+          text: `### 📖 ${data.name} (${data.meaning})\n\n${data.summary}`,
+          type: "bot",
+        },
       ]);
     } catch (error) {
       console.error("Error fetching response:", error);
+      setIsTyping(false);
       setMessages((prev) => [
         ...prev,
         { text: "⚠️ There was an error fetching the data. Please try again later.", type: "bot" },
@@ -97,15 +105,18 @@ export default function GitaBotPage() {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`p-3 max-w-[75%] rounded-lg shadow-sm ${
+              className={`p-3 max-w-[75%] rounded-lg shadow-sm whitespace-pre-wrap ${
                 msg.type === "user"
                   ? "bg-blue-500 text-white self-end text-right"
                   : "bg-gray-200 text-gray-800 self-start text-left"
               }`}
             >
-              {msg.text}
+              {msg.type === "bot" ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
             </div>
           ))}
+          {isTyping && (
+            <div className="text-sm text-gray-500 italic">Bot is typing...</div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 
@@ -119,10 +130,14 @@ export default function GitaBotPage() {
             className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             placeholder='Ask about a chapter (e.g., "Tell me about Chapter 2")...'
           />
-          <IoSend
-            className="text-2xl ml-3 text-indigo-500 cursor-pointer hover:text-indigo-700 transition"
+          <motion.button
+            whileTap={{ scale: 0.85 }}
+            aria-label="Send"
             onClick={handleSend}
-          />
+            className="ml-3 text-indigo-500 hover:text-indigo-700 transition"
+          >
+            <IoSend className="text-2xl" />
+          </motion.button>
         </div>
       </motion.div>
     </div>

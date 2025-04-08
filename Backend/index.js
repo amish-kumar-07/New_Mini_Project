@@ -3,17 +3,20 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import pg from "pg";
 import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// Database Configuration
+// PostgreSQL Database Setup
 const db = new pg.Client({
-  connectionString: 'postgresql://neondb_owner:npg_n5qkVy6fuMdr@ep-curly-river-a5btldv9-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require',
+  connectionString: process.env.PG_CONNECTION_STRING,
   ssl: {
     rejectUnauthorized: false,
   },
@@ -31,7 +34,7 @@ db.connect()
 let loggedInUserId = null;
 
 /**
- * 📌 User Login (Plain-text comparison)
+ * 📌 User Login
  */
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -43,23 +46,16 @@ app.post("/login", async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM users WHERE username = $1", [username]);
 
-    if (result.rows.length === 0) {
+    if (result.rows.length === 0 || result.rows[0].password_hash !== password) {
       return res.status(401).json({ message: "Invalid username or password" });
     }
 
-    const user = result.rows[0];
-    
-    // Skipping password hash check since bcrypt is removed
-    if (user.password_hash !== password) {
-      return res.status(401).json({ message: "Invalid username or password" });
-    }
-
-    loggedInUserId = user.id;
+    loggedInUserId = result.rows[0].id;
     console.log(`✅ User logged in: ${loggedInUserId}`);
 
     res.status(200).json({
       message: "Login successful",
-      user,
+      user: result.rows[0],
       loggedInUserId,
     });
   } catch (error) {
@@ -69,7 +65,7 @@ app.post("/login", async (req, res) => {
 });
 
 /**
- * 📌 User Registration (Plain-text password)
+ * 📌 User Registration
  */
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
@@ -101,7 +97,7 @@ app.post("/register", async (req, res) => {
 });
 
 /**
- * 📌 Get Current User ID
+ * 📌 Get Current Logged-in User ID
  */
 app.get("/current-user", (req, res) => {
   if (loggedInUserId) {
@@ -112,10 +108,10 @@ app.get("/current-user", (req, res) => {
 });
 
 /**
- * 📜 Get Chapter Summary by Number
+ * 📜 Bhagavad Gita API - Chapter Summary
  */
-const API_HOST = "bhagavad-gita3.p.rapidapi.com";
-const API_KEY = "9f6532efefmsh44df7a033084be9p187582jsnc4279017d598";
+const API_HOST = process.env.RAPIDAPI_HOST;
+const API_KEY = process.env.RAPIDAPI_KEY;
 
 app.get("/chapter/:chapterNumber", async (req, res) => {
   const { chapterNumber } = req.params;
@@ -146,7 +142,7 @@ app.get("/chapter/:chapterNumber", async (req, res) => {
   }
 });
 
-// Start the Express server
+// Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

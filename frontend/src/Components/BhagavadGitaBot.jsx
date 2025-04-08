@@ -66,11 +66,11 @@ export default function GitaBotPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-2 sm:px-4 md:px-6 py-6">
       {/* Back Button */}
       <button
         onClick={() => navigate("/dashboard")}
-        className="absolute top-4 left-4 bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition"
+        className="absolute top-4 left-4 bg-gray-800 text-white text-sm sm:text-base px-3 sm:px-4 py-2 rounded-md hover:bg-gray-700 transition"
       >
         ⬅ Back to Dashboard
       </button>
@@ -81,26 +81,26 @@ export default function GitaBotPage() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-6 flex flex-col"
+        className="w-full max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl bg-white shadow-lg rounded-lg flex flex-col overflow-hidden"
       >
         {/* Header */}
-        <div className="flex justify-between items-center bg-indigo-600 text-white px-4 py-3 rounded-lg">
-          <h2 className="text-lg font-semibold">Bhagavad Gita Bot</h2>
+        <div className="flex justify-between items-center bg-indigo-600 text-white px-4 py-3">
+          <h2 className="text-base sm:text-lg font-semibold">Bhagavad Gita Bot</h2>
           <IoClose
-            className="text-2xl cursor-pointer hover:text-red-400 transition"
+            className="text-xl sm:text-2xl cursor-pointer hover:text-red-400 transition"
             onClick={() => navigate("/dashboard")}
           />
         </div>
 
         {/* Chat Window */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2 h-96">
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2 h-[60vh] sm:h-[65vh] md:h-[70vh]">
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`p-3 max-w-[75%] rounded-lg shadow-sm ${
+              className={`p-3 text-sm sm:text-base max-w-[75%] rounded-lg shadow-sm break-words ${
                 msg.type === "user"
-                  ? "bg-blue-500 text-white self-end text-right"
-                  : "bg-gray-200 text-gray-800 self-start text-left"
+                  ? "bg-blue-500 text-white self-end text-right ml-auto"
+                  : "bg-gray-200 text-gray-800 self-start text-left mr-auto"
               }`}
             >
               {msg.text}
@@ -110,17 +110,17 @@ export default function GitaBotPage() {
         </div>
 
         {/* Input Box */}
-        <div className="border-t flex items-center p-3 bg-gray-50 rounded-b-lg">
+        <div className="border-t flex items-center px-3 py-2 sm:px-4 sm:py-3 bg-gray-50">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="flex-1 p-2 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             placeholder='Ask about a chapter (e.g., "Tell me about Chapter 2")...'
           />
           <IoSend
-            className="text-2xl ml-3 text-indigo-500 cursor-pointer hover:text-indigo-700 transition"
+            className="text-xl sm:text-2xl ml-2 sm:ml-3 text-indigo-500 cursor-pointer hover:text-indigo-700 transition"
             onClick={handleSend}
           />
         </div>

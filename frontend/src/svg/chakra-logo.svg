@@ -1,0 +1,63 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle -->
+  <circle cx="100" cy="100" r="90" fill="none" stroke="url(#gradientLogo)" stroke-width="3"/>
+
+  <!-- Chakra points -->
+  <circle cx="100" cy="32" r="10" fill="#EF5350" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1" dur="3s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="scale" values="0.9;1.1" dur="3s" repeatCount="indefinite" additive="sum" />
+  </circle>
+  <circle cx="100" cy="168" r="10" fill="#7E57C2" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1" dur="3s" begin="0.2s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="scale" values="0.9;1.1" dur="3s" begin="0.2s" repeatCount="indefinite" additive="sum" />
+  </circle>
+  <circle cx="32" cy="100" r="10" fill="#29B6F6" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1" dur="3s" begin="0.4s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="scale" values="0.9;1.1" dur="3s" begin="0.4s" repeatCount="indefinite" additive="sum" />
+  </circle>
+  <circle cx="168" cy="100" r="10" fill="#66BB6A" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1" dur="3s" begin="0.6s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="scale" values="0.9;1.1" dur="3s" begin="0.6s" repeatCount="indefinite" additive="sum" />
+  </circle>
+  <circle cx="139" cy="139" r="10" fill="#FFA726" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1" dur="3s" begin="0.8s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="scale" values="0.9;1.1" dur="3s" begin="0.8s" repeatCount="indefinite" additive="sum" />
+  </circle>
+  <circle cx="61" cy="61" r="10" fill="#AB47BC" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1" dur="3s" begin="1s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="scale" values="0.9;1.1" dur="3s" begin="1s" repeatCount="indefinite" additive="sum" />
+  </circle>
+  <circle cx="139" cy="61" r="10" fill="#42A5F5" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1" dur="3s" begin="1.2s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="scale" values="0.9;1.1" dur="3s" begin="1.2s" repeatCount="indefinite" additive="sum" />
+  </circle>
+  <circle cx="61" cy="139" r="10" fill="#26A69A" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;1" dur="3s" begin="1.4s" repeatCount="indefinite" />
+    <animateTransform attributeName="transform" type="scale" values="0.9;1.1" dur="3s" begin="1.4s" repeatCount="indefinite" additive="sum" />
+  </circle>
+
+  <!-- Center lotus petals -->
+  <g fill="#9C27B0" opacity="0.8">
+    <path d="M100,75 Q110,90 100,100 Q90,90 100,75">
+      <animate attributeName="opacity" values="0.8;1" dur="4s" repeatCount="indefinite" />
+    </path>
+    <path d="M100,75 Q110,90 100,100 Q90,90 100,75" transform="rotate(45 100 100)" />
+    <path d="M100,75 Q110,90 100,100 Q90,90 100,75" transform="rotate(90 100 100)" />
+    <path d="M100,75 Q110,90 100,100 Q90,90 100,75" transform="rotate(135 100 100)" />
+    <path d="M100,75 Q110,90 100,100 Q90,90 100,75" transform="rotate(180 100 100)" />
+    <path d="M100,75 Q110,90 100,100 Q90,90 100,75" transform="rotate(225 100 100)" />
+    <path d="M100,75 Q110,90 100,100 Q90,90 100,75" transform="rotate(270 100 100)" />
+    <path d="M100,75 Q110,90 100,100 Q90,90 100,75" transform="rotate(315 100 100)" />
+  </g>
+
+  <!-- Center dot -->
+  <circle cx="100" cy="100" r="8" fill="url(#gradientLogo)"/>
+
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="gradientLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+</svg>
