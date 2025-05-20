@@ -1,8 +1,3 @@
-Absolutely! Here's a **complete and properly formatted `README.md`** file for your **Sacramental Learning** app, ready to drop into your project:
-
----
-
-````markdown
 # 🙏 Sacramental Learning – A Spiritual Wellness App
 
 **Sacramental Learning** is a spiritual wellness web application designed to help individuals—especially those struggling with smoking or drinking—pursue a more meaningful and healthy life. The app provides daily motivation, guided video lessons, and interactive quizzes to inspire self-control, mindfulness, and long-term transformation.
